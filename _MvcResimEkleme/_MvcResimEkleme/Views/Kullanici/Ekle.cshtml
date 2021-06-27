@@ -1,0 +1,95 @@
+﻿@if (ViewBag.Sonuc != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.Sonuc
+    </div>
+}
+
+
+
+<div class="card card-success">
+    <div class="card-header">
+        <h3 class="card-title">Kullanıcı Ekle</h3>
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    @using (Html.BeginForm("Ekle", "Kullanici", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="card-body">
+            <div class="form-group">
+                <label for="exampleInputEmail1">Ad</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Adınız" name="ad">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Soyad</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Soyadınız" name="soyad">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Eposta</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Eposta adresiniz" name="eposta">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Şifre</label>
+                <input type="password" class="form-control" id="exampleInputEmail1" placeholder="*********" name="sifre">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Yetki</label>
+                @Html.DropDownList("yetkiID", null, new { @class = "form-control" })
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">Fakülte</label>
+                @Html.DropDownList("Fakulte", (IEnumerable<SelectListItem>)ViewBag.fakulteID, "-- Fakülte Seçiniz  --", new { @class = "form-control" })
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">Bölüm</label>
+                @Html.DropDownList("birimID", new SelectList(string.Empty, "Value", "Text"), "-- Bölüm Seçiniz --",
+                       new { @class = "form-control", @Id = "birimID" })
+            </div>
+
+
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">Resim</label>
+                <input type="file" class="form-control" id="exampleInputEmail1" name="resim2">
+            </div>
+
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+            <button type="submit" class="btn btn-success">Kaydet</button>
+        </div>
+    }
+</div>
+
+@section JavaScriptAlt
+{
+    <script type="text/javascript">
+    $(document).ready(function () {
+        //Şehir seçilince
+        $("#Fakulte").change(function () {
+            $("#birimID").empty();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("BolumGetir")', // İlçe metoduna git
+                dataType: 'json',
+                data: { id: $("#Fakulte").val() },
+                // Sehir id'ye göre veri getir.
+
+                success: function (states) {
+                    $.each(states, function (i, state) {
+                        $("#birimID").append('<option value="' + state.Value + '">' +
+                             state.Text + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Veri bulunamadı.' + ex);
+                }
+            });
+            return false;
+        })
+    });
+    </script>
+}
+
